@@ -2,7 +2,7 @@ import express from 'express'
 const router  = express.Router();
 
 router.get("/login",(req,res)=>{
-    res.send("Signup page ");
+    res.send("Login page ");
 })
 router.get("/signup",(req,res)=>{
     res.send("signup page ");
@@ -14,3 +14,5 @@ router.get("/logout",(req,res)=>{
 
 
 export default router;
+
+   
