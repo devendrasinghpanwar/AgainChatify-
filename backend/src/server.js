@@ -1,4 +1,4 @@
-/* // const express = require('express');
+ // const express = require('express');
 import express from "express"; // 
 import dotenv from 'dotenv';
 import path from 'path';
@@ -28,10 +28,10 @@ if(process.env.NODE_ENV==='production'){
 }
 
 app.listen(PORT ,()=>console.log("Server is running on port :"+PORT));  
-*/
 
 
 
+/*
 import path from "path";
 import express from "express";
 import dotenv from "dotenv";
@@ -62,3 +62,5 @@ if (process.env.NODE_ENV === "production") {
 app.listen(PORT, () =>
   console.log(`Server running on port ${PORT}`)
 );
+
+*/
