@@ -3,6 +3,9 @@ import bcrypt from 'bcryptjs';
 import { generateToken } from "../Utils/Utils.js";
 import { sendWelcomeEmail } from "../emails/emailHandler.js";
 import { ENV } from "../lib/env.js";
+
+
+
 export const signup = async (req, res) => {
     const { fullName, email, password } = req.body
 
@@ -66,8 +69,51 @@ export const signup = async (req, res) => {
             res.status(400).json({ message: "Invalid user data" });
         }
     } catch (error) {
-        console.log("Error in signup controller:", error)
+        console.error("Error in signup controller:", error)
         res.status(500).json({ message: "Internal server error" });
     }
 
+}
+
+export const login = async (req, res) => {
+  const { email, password } = req.body;
+  if(!email || !password) return res.status(400).json({message:"we can't find email and password"});
+
+  try {
+    console.log("LOGIN INPUT:", email, password);
+
+    const user = await User.findOne({ email });
+    console.log("USER FROM DB:", user);
+
+    if (!user)
+      return res.status(400).json({ message: "Invalid Credentials" });
+
+    const isPassword = await bcrypt.compare(password, user.password);
+    console.log("PASSWORD MATCH:", isPassword);
+
+    if (!isPassword)
+      return res.status(400).json({ message: "Invalid Credentials" });
+
+    const token = generateToken(user._id,res);
+
+    res.status(200).json({
+      _id: user._id,
+      fullName: user.fullName,
+      email: user.email,
+      profilePic: user.profilePic,
+      token
+    });
+
+  } catch (error) {
+    console.error("Error in login controller", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+
+export const logout = (_,res)=>{ // we don't need the req cause we're not fetching anything from either frontend or backend ( server )    
+    // for logout we just remove the jwt tokens that't it and return the message in response that logged out successfully  
+
+    res.cookie("jwt","",{maxAge:0}); // "jwt" is a name of cookie and null in token and maxAge of this cookie is 0 
+    res.status(200).json({message:"Loggedd out successfully"});
 }
