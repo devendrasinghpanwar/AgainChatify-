@@ -12,7 +12,7 @@ export const generateToken = (userId,res)=>{
      const token= jwt.sign({userId},ENV.JWT_SECRET,{expiresIn:"7d"});
 
 
-     res.cookie("jwt",token,{
+     res.cookie("jwt",token,{ // just like when we create or signed up new user so we are generating new token right so we're making cookies alongside cookie as we created new user 
         maxAge:7*24*60*60*1000, // Milleseconds
         httpOnly:true, // prevent xss attacks: cross-site scripting
         sameSite:"strict", // CSRF attacks 
