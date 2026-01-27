@@ -22,6 +22,7 @@ app.use('/api/auth',messageRoute);
 
 
 
+
 app.get("/", (req, res) => {
   res.send("Backend is running 🚀");
 });
