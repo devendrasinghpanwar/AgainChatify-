@@ -3,6 +3,7 @@ import bcrypt from 'bcryptjs';
 import { generateToken } from "../Utils/Utils.js";
 import { sendWelcomeEmail } from "../emails/emailHandler.js";
 import { ENV } from "../lib/env.js";
+import { useId } from "react";
 
 
 
@@ -45,7 +46,7 @@ export const signup = async (req, res) => {
             // after codeReview AI
 
             // persist user first, then issue with cookie */
-            const savedUser = await newUser.save(); 
+            const savedUser = await newUser.save();
             generateToken(savedUser._id, res);
 
 
@@ -58,11 +59,11 @@ export const signup = async (req, res) => {
 
 
             // todo : send a welcome email to user 
-             
+
             try {
-                await sendWelcomeEmail(savedUser.email,savedUser.fullName,ENV.CLIENT_URL);
+                await sendWelcomeEmail(savedUser.email, savedUser.fullName, ENV.CLIENT_URL);
             } catch (error) {
-                console.error("Failed to send welcome email:",error);  
+                console.error("Failed to send welcome email:", error);
             }
 
         } else {
@@ -76,44 +77,66 @@ export const signup = async (req, res) => {
 }
 
 export const login = async (req, res) => {
-  const { email, password } = req.body;
-  if(!email || !password) return res.status(400).json({message:"we can't find email and password"});
+    const { email, password } = req.body;
+    if (!email || !password) return res.status(400).json({ message: "we can't find email and password" });
 
-  try {
-    console.log("LOGIN INPUT:", email, password);
+    try {
+        console.log("LOGIN INPUT:", email, password);
 
-    const user = await User.findOne({ email });
-    console.log("USER FROM DB:", user);
+        const user = await User.findOne({ email });
+        console.log("USER FROM DB:", user);
 
-    if (!user)
-      return res.status(400).json({ message: "Invalid Credentials" });
+        if (!user)
+            return res.status(400).json({ message: "Invalid Credentials" });
 
-    const isPassword = await bcrypt.compare(password, user.password);
-    console.log("PASSWORD MATCH:", isPassword);
+        const isPassword = await bcrypt.compare(password, user.password);
+        console.log("PASSWORD MATCH:", isPassword);
 
-    if (!isPassword)
-      return res.status(400).json({ message: "Invalid Credentials" });
+        if (!isPassword)
+            return res.status(400).json({ message: "Invalid Credentials" });
 
-    const token = generateToken(user._id,res);
+        const token = generateToken(user._id, res);
 
-    res.status(200).json({
-      _id: user._id,
-      fullName: user.fullName,
-      email: user.email,
-      profilePic: user.profilePic,
-      token
-    });
+        res.status(200).json({
+            _id: user._id,
+            fullName: user.fullName,
+            email: user.email,
+            profilePic: user.profilePic,
+            token
+        });
 
-  } catch (error) {
-    console.error("Error in login controller", error);
-    res.status(500).json({ message: "Internal server error" });
-  }
+    } catch (error) {
+        console.error("Error in login controller", error);
+        res.status(500).json({ message: "Internal server error" });
+    }
 };
 
 
-export const logout = (_,res)=>{ // we don't need the req cause we're not fetching anything from either frontend or backend ( server )    
+export const logout = (_, res) => { // we don't need the req cause we're not fetching anything from either frontend or backend ( server )    
     // for logout we just remove the jwt tokens that't it and return the message in response that logged out successfully  
 
-    res.cookie("jwt","",{maxAge:0}); // "jwt" is a name of cookie and null in token and maxAge of this cookie is 0 
-    res.status(200).json({message:"Loggedd out successfully"});
+    res.cookie("jwt", "", { maxAge: 0 }); // "jwt" is a name of cookie and null in token and maxAge of this cookie is 0 
+    res.status(200).json({ message: "Loggedd out successfully" });
 }
+
+
+export const updateProfile = async (req, res) => {
+    try {
+        const { profilePic } = await req.body; // fetch profile pic from body  
+
+        // then update(upload) it , through cloudinary function
+
+        const uploadResponse = await cloudinary.uploader.upload(profilePic);
+
+        const updateUser = await User.findByIdAndUpdate(
+            useId,
+            { profilePic: uploadResponse.secure_url }, // * update profile pic using secure url ( which is image has been stored)
+            { new: true }).select("-password"); //  this will return the updated user object 
+
+    } catch (error) {
+        console.error("Error in update profile", error);
+        res.status(500).json({ message: "Internal server error"});
+    } 
+
+}
+

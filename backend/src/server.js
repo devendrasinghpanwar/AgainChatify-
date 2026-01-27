@@ -1,6 +1,6 @@
  // const express = require('express');
 import express from "express"; // 
-
+import cookieParser from 'cookie-parser' ;
 import path from 'path';
 import authRoutes from './routes/authRoutes.js';
 import messageRoute from './routes/messageRoute.js'
@@ -15,9 +15,12 @@ const __dirname=path.resolve();
 // console.log(dotenv.config());
  const PORT = ENV.PORT || 3000;
  app.use(express.json()); // req.body , middleware
+ app.use(cookieParser()); // use cookie-parser , for parse the cookies  
 
 app.use("/api/auth", authRoutes);
 app.use('/api/auth',messageRoute);
+
+
 
 app.get("/", (req, res) => {
   res.send("Backend is running 🚀");
