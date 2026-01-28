@@ -5,6 +5,8 @@ import jwt from "jsonwebtoken";
 
 
 export const protectRoute =async(req,res,next)=>{ // it will take three arguments req( which is used for fetching data) , res for giving response to frontend from backend , and next is used for next () function which is used for calling next method ( function ) which on queue 
+    console.log("Cookies:", req.cookies);
+
     // user  is exist of not in our databse
     try {
  

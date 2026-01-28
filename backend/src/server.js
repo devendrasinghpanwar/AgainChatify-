@@ -18,7 +18,7 @@ const __dirname=path.resolve();
  app.use(cookieParser()); // use cookie-parser , for parse the cookies  
 
 app.use("/api/auth", authRoutes);
-app.use('/api/auth',messageRoute);
+app.use('/api/messages',messageRoute);
 
 
 
