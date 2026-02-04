@@ -6,7 +6,7 @@ import authRoutes from './routes/authRoutes.js';
 import messageRoute from './routes/messageRoute.js'
 import {connectDB} from './lib/db.js';
 import { ENV } from "./lib/env.js";
-
+import cors from 'cors';
 const app= express();
 
 
@@ -15,6 +15,9 @@ const __dirname=path.resolve();
 // console.log(dotenv.config());
  const PORT = ENV.PORT || 3000;
  app.use(express.json()); // req.body , middleware
+
+app.use(cors({origin:ENV.CLIENT_URL,credentials:true}));
+
  app.use(cookieParser()); // use cookie-parser , for parse the cookies  
 
 app.use("/api/auth", authRoutes);
