@@ -1,6 +1,6 @@
 import React ,{useState} from 'react'
 import { useAuthStore } from '../store/useAuthStore';
-import { Fullscreen, UserIcon } from 'lucide-react';
+import { Fullscreen, LockIcon, MailIcon, UserIcon } from 'lucide-react';
 import { MessageCircleIcon } from 'lucide-react';
 import { Link } from 'react-router';
 import BorderAnimatedContainer from '../components/BorderAnimatedContainer.jsx';
@@ -54,7 +54,7 @@ function SignUp() {
                 <div className=''>
                   <label className='auth-input-level'>Email</label>
                   <div className='relative'>
-                    <UserIcon className='auth-input-icon'/>
+                    <MailIcon className='auth-input-icon'/>
                     <input type='text' value={formData.email} 
                     onChange={(e)=> setFormData({...formData,email:e.target.value})}
                     className='input'
@@ -68,7 +68,7 @@ function SignUp() {
                 <div className=''>
                   <label className='auth-input-level'>Password</label>
                   <div className='relative'>
-                    <UserIcon className='auth-input-icon'/>
+                    <LockIcon className='auth-input-icon'/>
                     <input type='text' value={formData.p} 
                     onChange={(e)=> setFormData({...formData,password:e.target.value})}
                     className='input'

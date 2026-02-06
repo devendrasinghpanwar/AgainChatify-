@@ -10,7 +10,7 @@ router.get("/test", arcjetProtection,(req,res)=>{
     res.status(200).json({message:"Test route is here "});
 });
 
-router.post("/login",protectRoute ,login);
+router.post("/login",login);
 
 router.post("/logout",logout);
 
