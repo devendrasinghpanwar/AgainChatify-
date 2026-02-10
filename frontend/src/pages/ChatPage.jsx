@@ -7,9 +7,10 @@ import ChatsList from '../components/ChatsList.jsx';
 import ContactList from '../components/ContactList.jsx';
 import ChatContainer from '../components/ChatContainer.jsx';
 import NoConversationPlaceHolder from '../components/NoConversationPlaceHolder.jsx';
+import { useChatStore } from '../store/useChatStore.js';
 function ChatPage() {
 
-  const {activeTab,selectedUser}=useState();
+  const {activeTab,selectedUser}=useChatStore();
 
   return (
 
