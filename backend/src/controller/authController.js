@@ -4,7 +4,7 @@ import { generateToken } from "../Utils/Utils.js";
 import { sendWelcomeEmail } from "../emails/emailHandler.js";
 import { ENV } from "../lib/env.js";
 import { useId } from "react";
-
+import cloudinary from "../lib/cloudinary.js";
 
 
 export const signup = async (req, res) => {
@@ -121,22 +121,29 @@ export const logout = (_, res) => { // we don't need the req cause we're not fet
 
 
 export const updateProfile = async (req, res) => {
-    try {
-        const { profilePic } = await req.body; // fetch profile pic from body  
+  try {
+    const userId = req.user._id; // ✅ from protectRoute
+    const { profilePic } = req.body;
 
-        // then update(upload) it , through cloudinary function
+    if (!profilePic) {
+      return res.status(400).json({ message: "Profile picture is required" });
+    }
 
-        const uploadResponse = await cloudinary.uploader.upload(profilePic);
+    // Upload base64 image to Cloudinary
+    const uploadResponse = await cloudinary.uploader.upload(profilePic, {
+      folder: "profile_pics",
+    });
 
-        const updateUser = await User.findByIdAndUpdate(
-            useId,
-            { profilePic: uploadResponse.secure_url }, // * update profile pic using secure url ( which is image has been stored)
-            { new: true }).select("-password"); //  this will return the updated user object 
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { profilePic: uploadResponse.secure_url },
+      { new: true }
+    ).select("-password");
 
-    } catch (error) {
-        console.error("Error in update profile", error);
-        res.status(500).json({ message: "Internal server error"});
-    } 
+    return res.status(200).json(updatedUser);
 
-}
-
+  } catch (error) {
+    console.error("Error in update profile:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
